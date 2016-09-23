@@ -1,0 +1,18 @@
+@model Dapper.Page<MvcCore.User>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <td>ID</td>
+            <td>Name</td>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var m in Model.Items) {
+        <tr>
+            <td><a href="~/user/@m.Id">@m.Name</a></td>
+            <td>@m.Title @m.FullName</td>
+        </tr>
+    }
+    </tbody>
+</table>

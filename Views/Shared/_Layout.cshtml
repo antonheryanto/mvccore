@@ -1,0 +1,34 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+    <meta name="description" content="Asp.Net Core running on Mono">
+    <title>Mvc Core</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css">
+</head>
+<body>
+<nav class="navbar navbar-light navbar-fixed-top bg-faded">
+    <a class="navbar-brand" href="/">Mvc Core</a>
+    <ul class="nav navbar-nav pull-right">
+        <li class="nav-item"><a class="nav-link" href="~/">Home</a></li>
+        <li class="nav-item"><a class="nav-link" href="~/user">User</a></li>
+    @if (User.Identity.IsAuthenticated) {
+        <li class="nav-item"><a class="nav-link" href="~/user/logout">Logout</a></li>
+    }
+    </ul>
+</nav>
+<br>
+<br>
+<br>
+    <main class="container">
+        @RenderBody()
+    </main>
+    <footer class="navbar navbar-fixed-bottom">
+        <p>&copy; @DateTime.Now.Year</p>
+    </footer>
+</div>
+<script src="~/lib/bootstrap/dist/css/bootstrap.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,4 @@
+project.lock.json
+wwwroot/
+bin/
+obj/
