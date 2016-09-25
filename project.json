@@ -15,6 +15,7 @@
     "Dapper": "*",
     "MySql.Data": "*",
     "Microsoft.VisualStudio.Web.BrowserLink.Loader": "*",
+    "Microsoft.Extensions.Configuration.Json": "*",
     "Microsoft.Extensions.Logging.Console": "*",
     "Microsoft.AspNetCore.DataProtection": "*",
     "Microsoft.AspNetCore.Diagnostics": "*",

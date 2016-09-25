@@ -1,3 +1,4 @@
+@inject MvcCore.ApplicationService app
 <!doctype html>
 <html>
 <head>
@@ -11,10 +12,11 @@
 <body>
 <nav class="navbar navbar-light navbar-fixed-top bg-faded">
     <a class="navbar-brand" href="/">Mvc Core</a>
-    <ul class="nav navbar-nav pull-right">
-        <li class="nav-item"><a class="nav-link" href="~/">Home</a></li>
+    <ul class="nav navbar-nav pull-md-right">
+        <li class="nav-item"><a class="nav-link" href="~/test">Test</a></li>
         <li class="nav-item"><a class="nav-link" href="~/user">User</a></li>
     @if (User.Identity.IsAuthenticated) {
+        <li class="nav-item"><a class="nav-link" href="~/user/@app.User.Id">@app.User.FullName</a></li>
         <li class="nav-item"><a class="nav-link" href="~/user/logout">Logout</a></li>
     }
     </ul>
@@ -29,6 +31,5 @@
         <p>&copy; @DateTime.Now.Year</p>
     </footer>
 </div>
-<script src="~/lib/bootstrap/dist/css/bootstrap.min.js"></script>
 </body>
 </html>

@@ -1,5 +1,14 @@
-<form asp-action="login">
-    <input type="text" name="username">
-    <input type="password" name="password">
-    <button>Login</button>
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model MvcCore.User
+
+<form class="col-md-8 offset-md-2" method="POST">
+    <div class="form-group">
+        <label>Username</label>
+        @Html.TextBoxFor(m => m.Name, new { @class="form-control"})
+    </div>
+    <div class="form-group">
+        <label>Password</label>
+        @Html.PasswordFor(m => m.Password, new { @class="form-control"})
+    </div>
+    <button class="btn btn-primary">Login</button>
 </form>

@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -15,39 +14,45 @@ namespace MvcCore
 {
     public class UserController : Controller
     {
-        readonly ILogger log;
-        readonly Db db;
-        public UserController (ILoggerFactory logger, Db dapper)
+        readonly ILogger _log;
+        readonly Db _db;
+        public UserController (ILoggerFactory logger, Db db)
         {
-            log = logger.CreateLogger<UserController>();
-            db = dapper;
+            _log = logger.CreateLogger<UserController>();
+            _db = db;
         }
 
         [Authorize]
         public IActionResult Index(int page = 1) {
-            var m = db.Users.Page(page);
+            var m = _db.Users.Page(page);
             return View(m);
         }
 
         [Route("user/{id:int}")]
+        [Authorize]
         public IActionResult Details(int id = 1) {
-            var m = db.Users.Get(id);
-            m.Title = $"Logged {User.Current()}";
-            return Json(m);
+            var m = _db.Users.Get(id);
+            return View(m);
         }
 
+        [HttpGet]
         public IActionResult Login() => View();
 
-        public async Task<IActionResult> Logged(string returnUrl = "~/")
+        [HttpPost]
+        public async Task<IActionResult> Login(User m, string returnUrl = "~/")
         {
-            if (User.Identities.Any(id => id.IsAuthenticated)) {
-                return new OkObjectResult(User.Identity.Name);
-            }
-            var user = new ClaimsPrincipal(new ClaimsIdentity(
-                new [] { new Claim(ClaimTypes.Name, "Anton") },
+            if (!ModelState.IsValid) return View(m);
+            
+            var user = _db.Query<User>("select * from users where email=@name and password=@password",
+                new { m.Name, password = m.Password.Encrypt() }).FirstOrDefault();
+            if (user == null) return View(m);
+
+            var u = new ClaimsPrincipal(new ClaimsIdentity(
+                new [] { new Claim(ClaimTypes.Name, user.Id.ToString()) },
                 CookieAuthenticationDefaults.AuthenticationScheme));
             await HttpContext.Authentication.SignInAsync(
-                CookieAuthenticationDefaults.AuthenticationScheme, user, new AuthenticationProperties {
+                CookieAuthenticationDefaults.AuthenticationScheme, u, new AuthenticationProperties {
+                    IsPersistent = false,
                     ExpiresUtc = DateTime.UtcNow.AddDays(1)
                 });
             return Redirect(returnUrl);
@@ -56,7 +61,7 @@ namespace MvcCore
         public async Task<IActionResult> Logout()
         {
             await HttpContext.Authentication.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            log.LogInformation(4, "User Logout");
+            _log.LogInformation(4, "User Logout");
             return Redirect("~/");
         }
 

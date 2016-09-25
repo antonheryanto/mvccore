@@ -1,22 +1,24 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MvcCore {
     public class HomeController : Controller
     {
-        readonly Db db;
-        public HomeController(Db idb)
+        private readonly Db _db;
+        private readonly ApplicationService _app;
+        public HomeController(Db idb, ApplicationService app)
         {
-            db = idb;
+            _db = idb;
+            _app = app;
         }
-        // [Authorize]
-        [HttpGet("/")]
+
         public IActionResult Index() => View();
 
+        [Authorize]
         [Route("test")]
         public IActionResult Test()
         {
-            var m = db.Users.Get(1);
-            return new OkObjectResult(m);
+            return View("~/Views/User/Details.cshtml", _app.User);
         }
     }
 }
