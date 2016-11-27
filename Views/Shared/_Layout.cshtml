@@ -1,4 +1,7 @@
-@inject MvcCore.ApplicationService app
+@inject Db db
+@{
+    var user = User.Info(db);
+}
 <!doctype html>
 <html>
 <head>
@@ -16,7 +19,7 @@
         <li class="nav-item"><a class="nav-link" href="~/test">Test</a></li>
         <li class="nav-item"><a class="nav-link" href="~/user">User</a></li>
     @if (User.Identity.IsAuthenticated) {
-        <li class="nav-item"><a class="nav-link" href="~/user/@app.User.Id">@app.User.FullName</a></li>
+        <li class="nav-item"><a class="nav-link" href="~/user/@user.Id">@user.FullName</a></li>
         <li class="nav-item"><a class="nav-link" href="~/user/logout">Logout</a></li>
     }
     </ul>

@@ -1,3 +1,5 @@
+web.config
+config.json
 project.lock.json
 wwwroot/
 bin/

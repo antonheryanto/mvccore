@@ -1,5 +1,6 @@
 using Dapper;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Configuration;
 
 namespace MvcCore {
     public class Db : Database<Db>
@@ -7,11 +8,13 @@ namespace MvcCore {
         public Table<User> Users { get; set; }
     }
 
+    //TODO support multiple Db
     public static class DbServiceExtension {
-        public static IServiceCollection DapperDb(this IServiceCollection services,  System.Data.IDbConnection cn)
+        public static IServiceCollection AddDb(this IServiceCollection services, IConfiguration config)
         {
+            var cn = new MySql.Data.MySqlClient.MySqlConnection(config.GetConnectionString("db"));
             cn.Open();
-            return services.AddSingleton<Db>(p => Db.Init(cn, 30));
+            return services.AddScoped<Db>(p => Db.Init(cn, 30));
         }
     }
 }

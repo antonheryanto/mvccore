@@ -14,24 +14,22 @@ namespace MvcCore
 {
     public class UserController : Controller
     {
-        readonly ILogger _log;
-        readonly Db _db;
-        public UserController (ILoggerFactory logger, Db db)
+        readonly Db db;
+        public UserController (Db db)
         {
-            _log = logger.CreateLogger<UserController>();
-            _db = db;
+            this.db = db;
         }
 
         [Authorize]
         public IActionResult Index(int page = 1) {
-            var m = _db.Users.Page(page);
+            var m = db.Users.Page(page);
             return View(m);
         }
 
         [Route("user/{id:int}")]
         [Authorize]
         public IActionResult Details(int id = 1) {
-            var m = _db.Users.Get(id);
+            var m = db.Users.Get(id);
             return View(m);
         }
 
@@ -41,9 +39,11 @@ namespace MvcCore
         [HttpPost]
         public async Task<IActionResult> Login(User m, string returnUrl = "~/")
         {
+            if (string.IsNullOrWhiteSpace(m.Name)) ModelState.AddModelError(nameof(m.Name), "Required");
+            if (string.IsNullOrWhiteSpace(m.Password)) ModelState.AddModelError(nameof(m.Password), "Required");
             if (!ModelState.IsValid) return View(m);
             
-            var user = _db.Query<User>("select * from users where email=@name and password=@password",
+            var user = db.Query<User>("select * from users where email=@name and password=@password",
                 new { m.Name, password = m.Password.Encrypt() }).FirstOrDefault();
             if (user == null) return View(m);
 
@@ -61,7 +61,6 @@ namespace MvcCore
         public async Task<IActionResult> Logout()
         {
             await HttpContext.Authentication.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            _log.LogInformation(4, "User Logout");
             return Redirect("~/");
         }
 

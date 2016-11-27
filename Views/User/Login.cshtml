@@ -1,14 +1,15 @@
-@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
-@model MvcCore.User
+@model User
 
 <form class="col-md-8 offset-md-2" method="POST">
     <div class="form-group">
         <label>Username</label>
-        @Html.TextBoxFor(m => m.Name, new { @class="form-control"})
+        @Html.TextBoxFor(m => m.Name, new { @class="form-control", data_val="true"})
+        @Html.ValidationMessageFor(m => m.Name)
     </div>
     <div class="form-group">
         <label>Password</label>
-        @Html.PasswordFor(m => m.Password, new { @class="form-control"})
+        @Html.PasswordFor(m => m.Password, new { @class="form-control", data_val="true"})
+        @Html.ValidationMessageFor(m => m.Password)
     </div>
     <button class="btn btn-primary">Login</button>
 </form>

@@ -3,40 +3,37 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 
 namespace MvcCore
 {
     public class Startup
     {
-        public void ConfigureServices(IServiceCollection services)
+        public Startup(IHostingEnvironment env)
         {
-            var config = new ConfigurationBuilder()
-                .SetBasePath(System.IO.Directory.GetCurrentDirectory())
+            Configuration = new ConfigurationBuilder()
+                .SetBasePath(env.ContentRootPath)
                 .AddJsonFile("config.json")
                 .Build();
-            services.AddSingleton<IConfiguration>(config);
+        }
+
+        public IConfigurationRoot Configuration { get; set; }
+
+        public void ConfigureServices(IServiceCollection services)
+        {
+            services.AddSingleton<IConfiguration>(Configuration);
 
             services
                 .AddAuthentication(options => {
                     options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                 })
-                .DapperDb(new MySql.Data.MySqlClient.MySqlConnection(config.GetConnectionString("MySql")))
-                .AddApplication()
-                .AddMvc()
-                .MonoRazor();
+                //when this define not need to load dapper for mono
+                .AddDb(Configuration)
+                .AddMvc();
         }
 
-        public void Configure(IApplicationBuilder app, 
-            Db db,
-            IHostingEnvironment env, 
-            ILoggerFactory logger)
+        public void Configure(IApplicationBuilder app)
         {
-            if (env.IsDevelopment()) {
-                // logger.AddConsole(LogLevel.Debug);
-                app.UseBrowserLink();
-                app.UseDeveloperExceptionPage();
-            }
+            app.UseDeveloperExceptionPage();
 
             app.UseStaticFiles();
             app.UseCookieAuthentication(new CookieAuthenticationOptions() {
@@ -46,11 +43,8 @@ namespace MvcCore
                 AutomaticAuthenticate = true
             });
 
-            app.UseApplication();
-
             app.UseMvcWithDefaultRoute();
         }
 
-        
     }
 }

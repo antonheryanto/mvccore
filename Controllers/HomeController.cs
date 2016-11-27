@@ -4,12 +4,10 @@ using Microsoft.AspNetCore.Authorization;
 namespace MvcCore {
     public class HomeController : Controller
     {
-        private readonly Db _db;
-        private readonly ApplicationService _app;
-        public HomeController(Db idb, ApplicationService app)
+        readonly Db db;
+        public HomeController(Db db)
         {
-            _db = idb;
-            _app = app;
+            this.db = db;
         }
 
         public IActionResult Index() => View();
@@ -18,7 +16,7 @@ namespace MvcCore {
         [Route("test")]
         public IActionResult Test()
         {
-            return View("~/Views/User/Details.cshtml", _app.User);
+            return Json(User.Info(db));
         }
     }
 }
