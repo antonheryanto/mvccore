@@ -1,0 +1,8 @@
+{
+  "name": "MvcCore",
+  "private": true,
+  "dependencies": {
+    "bootstrap": "4.0",
+    "jquery-validation-unobtrusive": "3.2.6"
+  }
+}
