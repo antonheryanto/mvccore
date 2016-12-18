@@ -1,0 +1,23 @@
+@if (Model.TotalPage > 1) {
+<nav>
+@{ 
+    var qso = Context.Request.Query;
+    var qs = Context.Request.QueryString.Value;
+    var q = qso.ContainsKey("page") 
+        ? qs.Replace("&page="+qso["page"],"").Replace("page="+qso["page"],"")
+        : (qs.IsNullOrEmpty() ? "?" : qs + "");
+}
+<ul class="pagination">
+    <li class="page-item prev @(Model.HasPrevious ? "" : "disabled")">
+        <a class="page-link" href="@(Model.HasPrevious ? q + "&page=" + (Model.CurrentPage - 1) : qs)">&larr;</a>
+    </li>
+@for (int p = Model.Start; p <= Model.PageDisplayed; p++) {
+    var active = p == Model.CurrentPage ? "active" : "";
+    <li class="page-item @active"><a class="page-link" href="@q&page=@p">@p</a></li>
+}       
+    <li class="page-item next @(Model.HasNext ? "" : "disabled")">
+        <a class="page-link" href="@(Model.HasNext ? q + "&page=" + (Model.CurrentPage + 1) : qs)">&rarr;</a>
+    </li>
+</ul>
+</nav>
+}
