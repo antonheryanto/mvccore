@@ -12,11 +12,8 @@ namespace MvcCore {
 
         public IActionResult Index() => View();
 
-        [Authorize]
-        [Route("test")]
-        public IActionResult Test()
-        {
-            return Json(User.Info(db));
-        }
+		[Authorize]
+		[Route("test")]
+		public IActionResult Test() => Json(User.Info(db));
     }
 }

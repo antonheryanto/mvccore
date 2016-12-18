@@ -2,7 +2,7 @@
 @{
     var user = User.Info(db);
 }
-<!doctype html>
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8">
@@ -13,26 +13,25 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css">
 </head>
 <body>
-<nav class="navbar navbar-light navbar-fixed-top bg-faded">
-    <a class="navbar-brand" href="/">Mvc Core</a>
-    <ul class="nav navbar-nav pull-md-right">
-        <li class="nav-item"><a class="nav-link" href="~/test">Test</a></li>
-        <li class="nav-item"><a class="nav-link" href="~/user">User</a></li>
-    @if (User.Identity.IsAuthenticated) {
-        <li class="nav-item"><a class="nav-link" href="~/user/@user.Id">@user.FullName</a></li>
-        <li class="nav-item"><a class="nav-link" href="~/user/logout">Logout</a></li>
-    }
-    </ul>
-</nav>
+	<nav class="navbar navbar-light navbar-fixed-top bg-faded">
+    	<a class="navbar-brand" href="/">Mvc Core</a>
+    	<ul class="nav navbar-nav float-md-right">
+        	<li class="nav-item"><a class="nav-link" href="~/test">Test</a></li>
+        	<li class="nav-item"><a class="nav-link" href="~/user">User</a></li>
+    	@if (!user.IsAnonymous) {
+        	<li class="nav-item"><a class="nav-link" href="~/user/@user.Id">@user.FullName</a></li>
+        	<li class="nav-item"><a class="nav-link" href="~/user/logout">Logout</a></li>
+    	}
+    	</ul>
+	</nav>
 <br>
 <br>
 <br>
     <main class="container">
         @RenderBody()
-    </main>
+    </main>l
     <footer class="navbar navbar-fixed-bottom">
-        <p>&copy; @DateTime.Now.Year</p>
+        <p class="text-xs-center">MVC Core &copy; @DateTime.Now.Year</p>
     </footer>
-</div>
 </body>
 </html>

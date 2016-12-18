@@ -9,12 +9,19 @@ namespace MvcCore {
     }
 
     //TODO support multiple Db
-    public static class DbServiceExtension {
-        public static IServiceCollection AddDb(this IServiceCollection services, IConfiguration config)
-        {
-            var cn = new MySql.Data.MySqlClient.MySqlConnection(config.GetConnectionString("db"));
-            cn.Open();
-            return services.AddScoped<Db>(p => Db.Init(cn, 30));
-        }
-    }
+    public static class DbService
+	{
+		public static System.Data.Common.DbConnection DbConn(IConfiguration config, string name = "db")
+		{
+			var cs = config.GetConnectionString(name);
+			var cn = new MySql.Data.MySqlClient.MySqlConnection(cs);
+			cn.Open();
+			return cn;
+		}
+
+		public static IServiceCollection AddDb(this IServiceCollection services, IConfiguration config)
+		{
+			return services.AddScoped<Db>(p => Db.Init(DbConn(config), 30));
+		}
+	}
 }

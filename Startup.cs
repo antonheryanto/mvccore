@@ -26,7 +26,6 @@ namespace MvcCore
                 .AddAuthentication(options => {
                     options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                 })
-                //when this define not need to load dapper for mono
                 .AddDb(Configuration)
                 .AddMvc();
         }

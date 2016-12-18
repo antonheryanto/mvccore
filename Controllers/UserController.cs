@@ -2,17 +2,15 @@ using System;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Authentication;
-using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Mvc;
 
 namespace MvcCore
 {
-    public class UserController : Controller
+	public class UserController : Controller
     {
         readonly Db db;
         public UserController (Db db)
@@ -20,18 +18,27 @@ namespace MvcCore
             this.db = db;
         }
 
-        [Authorize]
-        public IActionResult Index(int page = 1) {
-            var m = db.Users.Page(page);
-            return View(m);
-        }
+		[Authorize]
+		public IActionResult Index(int page = 1) => View(db.Users.Page(page));
 
-        [Route("user/{id:int}")]
-        [Authorize]
-        public IActionResult Details(int id = 1) {
-            var m = db.Users.Get(id);
-            return View(m);
-        }
+		[Route("user/{id:int}")]
+		[Authorize]
+		public IActionResult Details(int id = 1) => View(db.Users.Get(id));
+
+		[Authorize]
+		[HttpGet]
+		public IActionResult Edit(int? id) => View(id.HasValue ? db.Users.Get(id.Value) : null);
+
+		[HttpPost]
+		public async Task<IActionResult> Edit(User m, string returnUrl = "~/")
+		{
+			if (m.Name.IsNullOrWhiteSpace()) ModelState.AddModelError(nameof(m.Name), "Required");
+			if (m.FullName.IsNullOrWhiteSpace()) ModelState.AddModelError(nameof(m.FullName), "Required");
+			if (!ModelState.IsValid) return View(m);
+
+			await db.Users.UpdateAsync(m.Id, new { m.Name, m.FullName });
+			return RedirectToAction(nameof(Index));
+		}
 
         [HttpGet]
         public IActionResult Login() => View();
@@ -42,9 +49,8 @@ namespace MvcCore
             if (string.IsNullOrWhiteSpace(m.Name)) ModelState.AddModelError(nameof(m.Name), "Required");
             if (string.IsNullOrWhiteSpace(m.Password)) ModelState.AddModelError(nameof(m.Password), "Required");
             if (!ModelState.IsValid) return View(m);
-            
-            var user = db.Query<User>("select * from users where email=@name and password=@password",
-                new { m.Name, password = m.Password.Encrypt() }).FirstOrDefault();
+
+			var user = db.Users.Get(new { email = m.Name, password = m.Password.Encrypt() });
             if (user == null) return View(m);
 
             var u = new ClaimsPrincipal(new ClaimsIdentity(
