@@ -8,7 +8,11 @@ namespace MvcCore {
         public Table<User> Users { get; set; }
     }
 
-    //TODO support multiple Db
+	public class Db2 : Database<Db2>
+	{
+		public Table<User> Users { get; set; }
+	}
+
     public static class DbService
 	{
 		public static System.Data.Common.DbConnection DbConn(IConfiguration config, string name = "db")
@@ -21,7 +25,8 @@ namespace MvcCore {
 
 		public static IServiceCollection AddDb(this IServiceCollection services, IConfiguration config)
 		{
-			return services.AddScoped<Db>(p => Db.Init(DbConn(config), 30));
+			return services.AddScoped(p => Db.Init(DbConn(config), 30))
+				           .AddScoped(p => Db2.Init(DbConn(config, nameof(Db2)), 30));
 		}
 	}
 }
